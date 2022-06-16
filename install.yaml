@@ -1,4 +1,4 @@
-name: addon-template
+name: ddev-laravel-queue
 
 # pre_install_actions - list of actions to run before installing the addon.
 # Examples would be removing an extraneous docker volume,
@@ -9,15 +9,13 @@ pre_install_actions:
 
 # list of files and directories listed that are copied into project .ddev directory
 project_files:
-- docker-compose.addon-template.yaml
-# - extra_files/
-# - somefile.sh
+- web-build/Dockerfile.ddev-laravel-worker
+- web-build/laravel-worker.conf
+
 
 # List of files and directories that are copied into the global .ddev directory
 global_files:
-# - commands
-# - homeadditions
+
 
 post_install_actions:
-# - chmod +x ~/.ddev/commands/web/somecommand
-# - perl -pi -e 's/oldstring/newstring/g' docker-compose.addon-template.yaml
+
