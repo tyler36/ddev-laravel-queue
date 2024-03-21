@@ -13,6 +13,11 @@ on:
         description: 'Debug with tmate set "debug_enabled"'
         required: false
         default: "false"
+
+# required for keep-alive workflow.
+permissions:
+  actions: write
+
 jobs:
   tests:
     strategy:
@@ -23,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: ddev/github-action-add-on-test@v0
+    - uses: ddev/github-action-add-on-test@v2
       with:
         ddev_version: ${{ matrix.ddev_version }}
         token: ${{ secrets.GITHUB_TOKEN }}
