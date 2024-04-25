@@ -1,22 +1,22 @@
 setup() {
   set -eu -o pipefail
-
-  export DIR="$( cd "$( dirname "$BATS_TEST_FILENAME" )" >/dev/null 2>&1 && pwd )/.."
-  export TESTDIR=~/tmp/ddev-laravel-worker
+  export DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" >/dev/null 2>&1 && pwd)/.."
+  export TESTDIR=~/tmp/test-laravel-queue
   mkdir -p $TESTDIR
-  export PROJNAME=ddev-laravel-worker
+  export PROJNAME=test-laravel-queue
   export DDEV_NON_INTERACTIVE=true
-  ddev delete -Oy ${PROJNAME} || true
+  ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
-  ddev config --project-name=${PROJNAME}
-  ddev start -y
-  echo "# ddev started at $(date)" >&3
+}
+
+health_checks() {
+  ddev exec "curl -s https://localhost:443/"
 }
 
 teardown() {
   set -eu -o pipefail
-  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  ddev delete -Oy ${PROJNAME}
+  cd ${TESTDIR} || (printf "unable to cd to ${TESTDIR}\n" && exit 1)
+  ddev delete -Oy ${PROJNAME} >/dev/null 2>&1
   [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
 }
 
@@ -24,22 +24,49 @@ teardown() {
   set -eu -o pipefail
   cd ${TESTDIR}
   echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  ddev config --project-name=${PROJNAME}
+  ddev start -y >/dev/null
+  ddev get ${DIR}
+  ddev restart
+  health_checks
+}
+
+@test "install from release" {
+  set -eu -o pipefail
+  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
+  echo "# ddev get tyler36/ddev-laravel-worker with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  ddev config --project-name=${PROJNAME}
+  ddev start -y >/dev/null
+  ddev get tyler36/ddev-laravel-worker
+  ddev restart >/dev/null
+  health_checks
+}
+
+@test "it processes jobs in Lavarel 11" {
+  set -eu -o pipefail
+  cd ${TESTDIR}
+  echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  # Setup a Laravel project
+  ddev config --project-type=laravel --docroot=public
+  ddev composer create --prefer-dist laravel/laravel:^11
+  ddev exec "php artisan key:generate"
+  # Get addon and test
   ddev get ${DIR}
   ddev restart
 
-  sleep 61
- # Make sure cron process is running
-  ddev exec 'sudo killall -0 cron'
+  # Add a route that dispatches a job when hit
+  echo "Route::get('test-dispatch', function () {
+    dispatch(function () {
+        logger('hello from test-dispatch');
+    });
+});" >> ./routes/web.php
+
+  # Visit the new route to trigger the dispatch
+  ddev exec "curl -s https://localhost:443/test-dispatch"
+  # We'll wait a few seconds to allow the queue worker to pick and process the job.
+  sleep 5
+
+  if ! grep -q "hello from test-dispatch" ./storage/logs/laravel.log; then
+    exit 1;
+  fi
 }
-
-# @test "install from release" {
-#   set -eu -o pipefail
-#   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-#   echo "# ddev get tyler36/ddev-laravel-worker with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-#   ddev get tyler36/ddev-laravel-worker
-#   ddev restart
-
-#   sleep 61
-#  # Make sure cron process is running
-#   ddev exec 'sudo killall -0 cron'
-# }
