@@ -13,6 +13,24 @@ health_checks() {
   ddev exec "curl -s https://localhost:443/"
 }
 
+queue_checks() {
+  # Add a route that dispatches a job when hit
+  echo "Route::get('test-dispatch', function () {
+    dispatch(function () {
+        logger('hello from test-dispatch');
+    });
+});" >> ./routes/web.php
+
+  # Visit the new route to trigger the dispatch
+  ddev exec "curl -s https://localhost:443/test-dispatch"
+  # We'll wait a few seconds to allow the queue worker to pick and process the job.
+  sleep 5
+
+  if ! grep -q "hello from test-dispatch" ./storage/logs/laravel.log; then
+    exit 1;
+  fi
+}
+
 teardown() {
   set -eu -o pipefail
   cd ${TESTDIR} || (printf "unable to cd to ${TESTDIR}\n" && exit 1)
@@ -54,19 +72,6 @@ teardown() {
   ddev get ${DIR}
   ddev restart
 
-  # Add a route that dispatches a job when hit
-  echo "Route::get('test-dispatch', function () {
-    dispatch(function () {
-        logger('hello from test-dispatch');
-    });
-});" >> ./routes/web.php
-
-  # Visit the new route to trigger the dispatch
-  ddev exec "curl -s https://localhost:443/test-dispatch"
-  # We'll wait a few seconds to allow the queue worker to pick and process the job.
-  sleep 5
-
-  if ! grep -q "hello from test-dispatch" ./storage/logs/laravel.log; then
-    exit 1;
-  fi
+  health_checks
+  queue_checks
 }
