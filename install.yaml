@@ -9,8 +9,7 @@ pre_install_actions:
 
 # list of files and directories listed that are copied into project .ddev directory
 project_files:
-- web-build/Dockerfile.ddev-laravel-worker
-- web-build/laravel-worker.conf
+- config.laravel-workers.yaml
 
 
 # List of files and directories that are copied into the global .ddev directory
@@ -18,4 +17,3 @@ global_files:
 
 
 post_install_actions:
-

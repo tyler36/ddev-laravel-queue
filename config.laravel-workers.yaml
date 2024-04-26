@@ -1,0 +1,5 @@
+#ddev-generated
+web_extra_daemons:
+  - name: "queue-1"
+    command: "/usr/bin/php /var/www/html/artisan queue:work --sleep=3 --tries=3"
+    directory: /var/www/html
