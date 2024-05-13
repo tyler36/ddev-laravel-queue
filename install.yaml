@@ -5,6 +5,6 @@ project_files:
 - config.laravel-workers.yaml
 
 post_install_actions:
-# Check if there are any < 1.0 release files and remove them.
-- if grep "#ddev-generated" web-build/Dockerfile.ddev-laravel-worker; then rm web-build/Dockerfile.ddev-laravel-worker; fi
-- if grep "#ddev-generated" web-build/laravel-worker.conf; then rm web-build/laravel-worker.conf; fi
+# - echo 'Check if there are any < 1.0 release files and remove them.'
+- if grep "#ddev-generated" web-build/Dockerfile.ddev-laravel-worker 2>/dev/null; then rm web-build/Dockerfile.ddev-laravel-worker; fi
+- if grep "#ddev-generated" web-build/laravel-worker.conf 2>/dev/null; then rm web-build/laravel-worker.conf; fi
