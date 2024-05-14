@@ -24,9 +24,6 @@ ddev restart
 ## What does this add-on do and add?
 
 1. Checks to make sure the DDEV version is adequate.
-2. Adds `.ddev/web-build/laravel-worker.conf`, which configures the queue worker.
-3. Adds `.ddev/web-build/Dockerfile.ddev-laravel-worker`, which adds the worker to supervisor.
-
- See [Configuring Supervisor](https://laravel.com/docs/master/queues#configuring-supervisor) for the latest recommended settings.
+2. Adds `.ddev/config.laravel-workers.yaml`, which starts the queue worker daemon.
 
 **Contributed and maintained by [tyler36](https://github.com/tyler36)**
