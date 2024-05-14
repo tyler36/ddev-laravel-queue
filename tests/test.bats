@@ -52,10 +52,10 @@ teardown() {
 @test "install from release" {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev get tyler36/ddev-laravel-worker with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  echo "# ddev get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev config --project-name=${PROJNAME}
   ddev start -y >/dev/null
-  ddev get tyler36/ddev-laravel-worker
+  ddev get tyler36/ddev-laravel-queue
   ddev restart >/dev/null
   health_checks
 }
