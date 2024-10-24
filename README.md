@@ -16,8 +16,21 @@ This add-on requires DDEV v1.19.3 or higher.
 
 - Install the DDEV laravel worker add-on:
 
+For DDEV v1.23.5 or above run
+
+```shell
+ddev add-on get tyler36/ddev-laravel-queue
+```
+
+For earlier versions of DDEV run
+
 ```shell
 ddev get tyler36/ddev-laravel-queue
+```
+
+Then restart the project
+
+```shell
 ddev restart
 ```
 
