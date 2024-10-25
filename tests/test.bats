@@ -41,10 +41,10 @@ teardown() {
 @test "install from directory" {
   set -eu -o pipefail
   cd ${TESTDIR}
-  echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  echo "# ddev add-on get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev config --project-name=${PROJNAME}
   ddev start -y >/dev/null
-  ddev get ${DIR}
+  ddev add-on get ${DIR}
   ddev restart
   health_checks
 }
@@ -52,10 +52,10 @@ teardown() {
 @test "install from release" {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  echo "# ddev add-on get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev config --project-name=${PROJNAME}
   ddev start -y >/dev/null
-  ddev get tyler36/ddev-laravel-queue
+  ddev add-on get tyler36/ddev-laravel-queue
   ddev restart >/dev/null
   health_checks
 }
@@ -63,13 +63,13 @@ teardown() {
 @test "it processes jobs in Lavarel 11" {
   set -eu -o pipefail
   cd ${TESTDIR}
-  echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  echo "# ddev add-on get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   # Setup a Laravel project
   ddev config --project-type=laravel --docroot=public
   ddev composer create --prefer-dist laravel/laravel:^11
   ddev exec "php artisan key:generate"
   # Get addon and test
-  ddev get ${DIR}
+  ddev add-on get ${DIR}
   ddev restart
 
   health_checks
@@ -79,7 +79,7 @@ teardown() {
 @test "it cleans up files from pre-release versions" {
   set -eu -o pipefail
   cd ${TESTDIR}
-  # echo "# ddev get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  # echo "# ddev add-on get ${DIR} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev config --project-name=${PROJNAME}
   ddev start -y >/dev/null
 
@@ -97,7 +97,7 @@ teardown() {
   done
 
   # Install the current release of the addon, which should remove the pre-release files.
-  ddev get ${DIR}
+  ddev add-on get ${DIR}
   ddev restart
   health_checks
 
