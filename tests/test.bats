@@ -1,6 +1,6 @@
 setup() {
   set -eu -o pipefail
-  
+
   export DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" >/dev/null 2>&1 && pwd)/.."
   export TESTDIR=~/tmp/test-laravel-queue
   mkdir -p $TESTDIR
@@ -28,7 +28,7 @@ queue_checks() {
         logger('hello from test-dispatch');
     });
 });" >> ./routes/web.php
-
+cat ./routes/web.php
   # Visit the new route to trigger the dispatch
   ddev exec "curl -s https://localhost:443/test-dispatch"
   # We'll wait a few seconds to allow the queue worker to pick and process the job.
