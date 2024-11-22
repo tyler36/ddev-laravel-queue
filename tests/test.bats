@@ -18,7 +18,7 @@ teardown() {
 }
 
 health_checks() {
-  ddev exec "curl -s https://localhost:443/"
+  ddev exec "curl -s https://web/"
 }
 
 queue_checks() {
@@ -30,7 +30,7 @@ queue_checks() {
 });" >> ./routes/web.php
 cat ./routes/web.php
   # Visit the new route to trigger the dispatch
-  ddev exec "curl -s https://localhost:443/test-dispatch"
+  ddev exec "curl -s https://web/test-dispatch"
   # We'll wait a few seconds to allow the queue worker to pick and process the job.
   sleep 10
   cat ./storage/logs/laravel.log
