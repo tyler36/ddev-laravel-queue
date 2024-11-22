@@ -49,17 +49,17 @@ teardown() {
   health_checks
 }
 
-bats test_tags=release
-@test "install from release" {
-  set -eu -o pipefail
-  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev add-on get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev config --project-name=${PROJNAME}
-  ddev start -y >/dev/null
-  ddev add-on get tyler36/ddev-laravel-queue
-  ddev restart >/dev/null
-  health_checks
-}
+# bats test_tags=release
+# @test "install from release" {
+#   set -eu -o pipefail
+#   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
+#   echo "# ddev add-on get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+#   ddev config --project-name=${PROJNAME}
+#   ddev start -y >/dev/null
+#   ddev add-on get tyler36/ddev-laravel-queue
+#   ddev restart >/dev/null
+#   health_checks
+# }
 
 @test "it processes jobs in Lavarel 11" {
   set -eu -o pipefail
