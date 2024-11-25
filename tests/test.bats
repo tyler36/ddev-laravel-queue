@@ -22,6 +22,8 @@ health_checks() {
 }
 
 queue_checks() {
+  set -eu -o pipefail
+
   # Add a route that dispatches a job when hit
   echo "Route::get('test-dispatch', function () {
     dispatch(function () {
