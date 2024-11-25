@@ -1,5 +1,6 @@
 setup() {
   set -eu -o pipefail
+
   export DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" >/dev/null 2>&1 && pwd)/.."
   export TESTDIR=~/tmp/test-laravel-queue
   mkdir -p $TESTDIR
@@ -9,33 +10,37 @@ setup() {
   cd "${TESTDIR}"
 }
 
+teardown() {
+  set -eu -o pipefail
+  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
+  ddev delete -Oy ${PROJNAME}
+  [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
+}
+
 health_checks() {
-  ddev exec "curl -s https://localhost:443/"
+  ddev exec "curl -s https://web/"
 }
 
 queue_checks() {
+  set -eu -o pipefail
+
   # Add a route that dispatches a job when hit
   echo "Route::get('test-dispatch', function () {
+    logger('accessing test-dispatch ...');
+
     dispatch(function () {
         logger('hello from test-dispatch');
     });
 });" >> ./routes/web.php
 
   # Visit the new route to trigger the dispatch
-  ddev exec "curl -s https://localhost:443/test-dispatch"
+  ddev exec "curl -s https://web/test-dispatch"
   # We'll wait a few seconds to allow the queue worker to pick and process the job.
-  sleep 5
+  sleep 10
 
   if ! grep -q "hello from test-dispatch" ./storage/logs/laravel.log; then
     exit 1;
   fi
-}
-
-teardown() {
-  set -eu -o pipefail
-  cd ${TESTDIR} || (printf "unable to cd to ${TESTDIR}\n" && exit 1)
-  ddev delete -Oy ${PROJNAME} >/dev/null 2>&1
-  [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
 }
 
 @test "install from directory" {
@@ -46,18 +51,6 @@ teardown() {
   ddev start -y >/dev/null
   ddev add-on get ${DIR}
   ddev restart
-  health_checks
-}
-
-# bats test_tags=release
-@test "install from release" {
-  set -eu -o pipefail
-  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev add-on get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev config --project-name=${PROJNAME}
-  ddev start -y >/dev/null
-  ddev add-on get tyler36/ddev-laravel-queue
-  ddev restart >/dev/null
   health_checks
 }
 
@@ -73,7 +66,6 @@ teardown() {
   ddev add-on get ${DIR}
   ddev restart
 
-  health_checks
   queue_checks
 }
 
@@ -109,4 +101,16 @@ teardown() {
       exit 1
     fi
   done
+}
+
+# bats test_tags=release
+@test "install from release" {
+  set -eu -o pipefail
+  cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
+  echo "# ddev add-on get tyler36/ddev-laravel-queue with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  ddev config --project-name=${PROJNAME}
+  ddev start -y >/dev/null
+  ddev add-on get tyler36/ddev-laravel-queue
+  ddev restart >/dev/null
+  health_checks
 }
