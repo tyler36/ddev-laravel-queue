@@ -66,7 +66,6 @@ cat ./routes/web.php
   ddev add-on get ${DIR}
   ddev restart
 
-  health_checks
   queue_checks
 }
 
