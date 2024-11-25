@@ -32,12 +32,12 @@ queue_checks() {
         logger('hello from test-dispatch');
     });
 });" >> ./routes/web.php
-cat ./routes/web.php
+
   # Visit the new route to trigger the dispatch
   ddev exec "curl -s https://web/test-dispatch"
   # We'll wait a few seconds to allow the queue worker to pick and process the job.
   sleep 10
-  cat ./storage/logs/laravel.log
+
   if ! grep -q "hello from test-dispatch" ./storage/logs/laravel.log; then
     exit 1;
   fi
