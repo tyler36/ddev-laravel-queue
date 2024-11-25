@@ -26,6 +26,8 @@ queue_checks() {
 
   # Add a route that dispatches a job when hit
   echo "Route::get('test-dispatch', function () {
+    logger('accessing test-dispatch ...');
+
     dispatch(function () {
         logger('hello from test-dispatch');
     });
