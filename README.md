@@ -2,6 +2,7 @@
 
 [![add-on registry](https://img.shields.io/badge/DDEV-Add--on_Registry-blue)](https://addons.ddev.com)
 [![tests](https://github.com/tyler36/ddev-laravel-queue/actions/workflows/tests.yml/badge.svg)](https://github.com/tyler36/ddev-laravel-queue/actions/workflows/tests.yml)
+[![last commit](https://img.shields.io/github/last-commit/tyler36/ddev-laravel-queue)](https://github.com/tyler36/ddev-laravel-queue/commits)
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
