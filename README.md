@@ -1,5 +1,6 @@
 # tyler36/ddev-laravel-queue <!-- omit in toc -->
 
+[![add-on registry](https://img.shields.io/badge/DDEV-Add--on_Registry-blue)](https://addons.ddev.com)
 [![tests](https://github.com/tyler36/ddev-laravel-queue/actions/workflows/tests.yml/badge.svg)](https://github.com/tyler36/ddev-laravel-queue/actions/workflows/tests.yml)
 
 - [Introduction](#introduction)
